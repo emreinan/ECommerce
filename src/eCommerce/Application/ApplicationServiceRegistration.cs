@@ -21,6 +21,7 @@ using NArchitecture.Core.Mailing.MailKit;
 using NArchitecture.Core.Security.DependencyInjection;
 using NArchitecture.Core.Security.JWT;
 using Application.Services.Products;
+using Application.Services.Orders;
 
 namespace Application;
 
@@ -63,6 +64,7 @@ public static class ApplicationServiceRegistration
         services.AddSecurityServices<Guid, int, Guid>(tokenOptions);
 
         services.AddScoped<IProductService, ProductManager>();
+        services.AddScoped<IOrderService, OrderManager>();
         return services;
     }
 

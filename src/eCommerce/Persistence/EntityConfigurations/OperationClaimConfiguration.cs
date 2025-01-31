@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using NArchitecture.Core.Security.Constants;
 using Application.Features.Products.Constants;
+using Application.Features.Orders.Constants;
 
 namespace Persistence.EntityConfigurations;
 
@@ -108,6 +109,20 @@ public class OperationClaimConfiguration : IEntityTypeConfiguration<OperationCla
                 new() { Id = ++lastId, Name = ProductsOperationClaims.Create },
                 new() { Id = ++lastId, Name = ProductsOperationClaims.Update },
                 new() { Id = ++lastId, Name = ProductsOperationClaims.Delete },
+            ]
+        );
+        #endregion
+        
+        
+        #region Orders CRUD
+        featureOperationClaims.AddRange(
+            [
+                new() { Id = ++lastId, Name = OrdersOperationClaims.Admin },
+                new() { Id = ++lastId, Name = OrdersOperationClaims.Read },
+                new() { Id = ++lastId, Name = OrdersOperationClaims.Write },
+                new() { Id = ++lastId, Name = OrdersOperationClaims.Create },
+                new() { Id = ++lastId, Name = OrdersOperationClaims.Update },
+                new() { Id = ++lastId, Name = OrdersOperationClaims.Delete },
             ]
         );
         #endregion
