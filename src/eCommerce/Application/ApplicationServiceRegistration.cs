@@ -22,6 +22,7 @@ using NArchitecture.Core.Security.DependencyInjection;
 using NArchitecture.Core.Security.JWT;
 using Application.Services.Products;
 using Application.Services.Orders;
+using Application.Services.Categories;
 
 namespace Application;
 
@@ -65,6 +66,7 @@ public static class ApplicationServiceRegistration
 
         services.AddScoped<IProductService, ProductManager>();
         services.AddScoped<IOrderService, OrderManager>();
+        services.AddScoped<ICategoryService, CategoryManager>();
         return services;
     }
 
