@@ -23,6 +23,8 @@ using NArchitecture.Core.Security.JWT;
 using Application.Services.Products;
 using Application.Services.Orders;
 using Application.Services.Categories;
+using Application.Services.Baskets;
+using Application.Services.BasketItems;
 
 namespace Application;
 
@@ -67,6 +69,8 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IProductService, ProductManager>();
         services.AddScoped<IOrderService, OrderManager>();
         services.AddScoped<ICategoryService, CategoryManager>();
+        services.AddScoped<IBasketService, BasketManager>();
+        services.AddScoped<IBasketItemService, BasketItemManager>();
         return services;
     }
 

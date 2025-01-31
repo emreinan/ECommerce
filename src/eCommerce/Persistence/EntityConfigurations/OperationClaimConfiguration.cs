@@ -9,6 +9,8 @@ using NArchitecture.Core.Security.Constants;
 using Application.Features.Products.Constants;
 using Application.Features.Orders.Constants;
 using Application.Features.Categories.Constants;
+using Application.Features.Baskets.Constants;
+using Application.Features.BasketItems.Constants;
 
 namespace Persistence.EntityConfigurations;
 
@@ -138,6 +140,34 @@ public class OperationClaimConfiguration : IEntityTypeConfiguration<OperationCla
                 new() { Id = ++lastId, Name = CategoriesOperationClaims.Create },
                 new() { Id = ++lastId, Name = CategoriesOperationClaims.Update },
                 new() { Id = ++lastId, Name = CategoriesOperationClaims.Delete },
+            ]
+        );
+        #endregion
+        
+        
+        #region Baskets CRUD
+        featureOperationClaims.AddRange(
+            [
+                new() { Id = ++lastId, Name = BasketsOperationClaims.Admin },
+                new() { Id = ++lastId, Name = BasketsOperationClaims.Read },
+                new() { Id = ++lastId, Name = BasketsOperationClaims.Write },
+                new() { Id = ++lastId, Name = BasketsOperationClaims.Create },
+                new() { Id = ++lastId, Name = BasketsOperationClaims.Update },
+                new() { Id = ++lastId, Name = BasketsOperationClaims.Delete },
+            ]
+        );
+        #endregion
+        
+        
+        #region BasketItems CRUD
+        featureOperationClaims.AddRange(
+            [
+                new() { Id = ++lastId, Name = BasketItemsOperationClaims.Admin },
+                new() { Id = ++lastId, Name = BasketItemsOperationClaims.Read },
+                new() { Id = ++lastId, Name = BasketItemsOperationClaims.Write },
+                new() { Id = ++lastId, Name = BasketItemsOperationClaims.Create },
+                new() { Id = ++lastId, Name = BasketItemsOperationClaims.Update },
+                new() { Id = ++lastId, Name = BasketItemsOperationClaims.Delete },
             ]
         );
         #endregion
