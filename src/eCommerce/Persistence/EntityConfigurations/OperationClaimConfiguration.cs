@@ -12,6 +12,7 @@ using Application.Features.Categories.Constants;
 using Application.Features.Baskets.Constants;
 using Application.Features.BasketItems.Constants;
 using Application.Features.OrderItems.Constants;
+using Application.Features.Addresses.Constants;
 
 namespace Persistence.EntityConfigurations;
 
@@ -183,6 +184,20 @@ public class OperationClaimConfiguration : IEntityTypeConfiguration<OperationCla
                 new() { Id = ++lastId, Name = OrderItemsOperationClaims.Create },
                 new() { Id = ++lastId, Name = OrderItemsOperationClaims.Update },
                 new() { Id = ++lastId, Name = OrderItemsOperationClaims.Delete },
+            ]
+        );
+        #endregion
+        
+        
+        #region Addresses CRUD
+        featureOperationClaims.AddRange(
+            [
+                new() { Id = ++lastId, Name = AddressesOperationClaims.Admin },
+                new() { Id = ++lastId, Name = AddressesOperationClaims.Read },
+                new() { Id = ++lastId, Name = AddressesOperationClaims.Write },
+                new() { Id = ++lastId, Name = AddressesOperationClaims.Create },
+                new() { Id = ++lastId, Name = AddressesOperationClaims.Update },
+                new() { Id = ++lastId, Name = AddressesOperationClaims.Delete },
             ]
         );
         #endregion
