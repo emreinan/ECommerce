@@ -11,7 +11,7 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         builder.ToTable("OrderItems").HasKey(oi => oi.Id);
 
         builder.Property(oi => oi.Id).HasColumnName("Id").IsRequired();
-        builder.Property(oi => oi.OrderId).HasColumnName("OrderId").IsRequired();
+        builder.Property(oi => oi.OrderId).HasColumnName("Id").IsRequired();
         builder.Property(oi => oi.ProductId).HasColumnName("ProductId").IsRequired();
         builder.Property(oi => oi.ProductNameAtOrderTime).HasColumnName("ProductNameAtOrderTime").IsRequired();
         builder.Property(oi => oi.ProductPriceAtOrderTime).HasColumnName("ProductPriceAtOrderTime").IsRequired();

@@ -6,8 +6,9 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 {
     public CreateOrderCommandValidator()
     {
-        RuleFor(c => c.UserId).NotEmpty();
-        RuleFor(c => c.OrderCode).NotEmpty();
-        RuleFor(c => c.Address).NotEmpty();
+        RuleFor(x => x.UserId).NotEmpty();
+        RuleFor(x => x.ShippingAddressId).NotEmpty();
+        RuleFor(x => x.PaymentMethod).NotEmpty();
+        RuleFor(x => x.DiscountId).NotEmpty();
     }
 }

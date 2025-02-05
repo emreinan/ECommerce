@@ -5,4 +5,7 @@ public static class OrdersBusinessMessages
     public const string SectionName = "Order";
 
     public const string OrderNotExists = "OrderNotExists";
+    public const string BasketEmpty = "Basket is empty!";
+
+
 }

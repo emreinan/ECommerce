@@ -5,6 +5,9 @@ using Persistence.Contexts;
 
 namespace Persistence.Repositories;
 
-public class BasketRepository(BaseDbContext context) : EfRepositoryBase<Basket, Guid, BaseDbContext>(context), IBasketRepository
+public class DiscountRepository : EfRepositoryBase<Discount, Guid, BaseDbContext>, IDiscountRepository
 {
+    public DiscountRepository(BaseDbContext context) : base(context)
+    {
+    }
 }

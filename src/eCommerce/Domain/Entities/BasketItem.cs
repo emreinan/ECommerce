@@ -9,7 +9,7 @@ public class BasketItem : Entity<Guid>
     public int Quantity { get; set; }
     public decimal Price { get; set; }
 
-    public virtual Product Product { get; set; }
-    public virtual Basket Basket { get; set; }
+    public virtual Product Product { get; set; } = default!;
+    public virtual Basket Basket { get; set; } = default!;
 
 }
