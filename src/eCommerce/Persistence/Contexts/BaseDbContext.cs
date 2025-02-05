@@ -23,6 +23,7 @@ public class BaseDbContext : DbContext
     public DbSet<Address> Addresses { get; set; }
     public DbSet<Discount> Discounts { get; set; }
     public DbSet<ProductImage> ProductImages { get; set; }
+    public DbSet<ProductComment> ProductComments { get; set; }
 
     public BaseDbContext(DbContextOptions dbContextOptions, IConfiguration configuration)
         : base(dbContextOptions)

@@ -29,6 +29,7 @@ using Application.Services.OrderItems;
 using Application.Services.Addresses;
 using Application.Services.Discounts;
 using Application.Services.ProductImages;
+using Application.Services.ProductComments;
 
 namespace Application;
 
@@ -79,6 +80,7 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IAddressService, AddressManager>();
         services.AddScoped<IDiscountService, DiscountManager>();
         services.AddScoped<IProductImageService, ProductImageManager>();
+        services.AddScoped<IProductCommentService, ProductCommentManager>();
         return services;
     }
 
