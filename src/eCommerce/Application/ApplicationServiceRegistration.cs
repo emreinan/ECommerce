@@ -28,6 +28,7 @@ using Application.Services.BasketItems;
 using Application.Services.OrderItems;
 using Application.Services.Addresses;
 using Application.Services.Discounts;
+using Application.Services.ProductImages;
 
 namespace Application;
 
@@ -77,6 +78,7 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IOrderItemService, OrderItemManager>();
         services.AddScoped<IAddressService, AddressManager>();
         services.AddScoped<IDiscountService, DiscountManager>();
+        services.AddScoped<IProductImageService, ProductImageManager>();
         return services;
     }
 

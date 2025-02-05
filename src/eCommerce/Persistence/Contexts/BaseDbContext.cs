@@ -22,6 +22,7 @@ public class BaseDbContext : DbContext
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Address> Addresses { get; set; }
     public DbSet<Discount> Discounts { get; set; }
+    public DbSet<ProductImage> ProductImages { get; set; }
 
     public BaseDbContext(DbContextOptions dbContextOptions, IConfiguration configuration)
         : base(dbContextOptions)
