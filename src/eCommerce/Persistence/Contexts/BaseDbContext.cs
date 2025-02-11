@@ -5,9 +5,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace Persistence.Contexts;
 
-public class BaseDbContext : DbContext
+public class BaseDbContext(DbContextOptions dbContextOptions, IConfiguration configuration) : DbContext(dbContextOptions)
 {
-    protected IConfiguration Configuration { get; set; }
+    protected IConfiguration Configuration { get; set; } = configuration;
     public DbSet<EmailAuthenticator> EmailAuthenticators { get; set; }
     public DbSet<OperationClaim> OperationClaims { get; set; }
     public DbSet<OtpAuthenticator> OtpAuthenticators { get; set; }
@@ -24,12 +24,6 @@ public class BaseDbContext : DbContext
     public DbSet<Discount> Discounts { get; set; }
     public DbSet<ProductImage> ProductImages { get; set; }
     public DbSet<ProductComment> ProductComments { get; set; }
-
-    public BaseDbContext(DbContextOptions dbContextOptions, IConfiguration configuration)
-        : base(dbContextOptions)
-    {
-        Configuration = configuration;
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

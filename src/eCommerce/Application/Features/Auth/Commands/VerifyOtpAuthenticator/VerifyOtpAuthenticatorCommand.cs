@@ -27,47 +27,34 @@ public class VerifyOtpAuthenticatorCommand : IRequest, ISecuredRequest
         ActivationCode = activationCode;
     }
 
-    public class VerifyOtpAuthenticatorCommandHandler : IRequestHandler<VerifyOtpAuthenticatorCommand>
+    public class VerifyOtpAuthenticatorCommandHandler(
+        IOtpAuthenticatorRepository otpAuthenticatorRepository,
+        AuthBusinessRules authBusinessRules,
+        IUserService userService,
+        IAuthenticatorService authenticatorService
+        ) : IRequestHandler<VerifyOtpAuthenticatorCommand>
     {
-        private readonly AuthBusinessRules _authBusinessRules;
-        private readonly IAuthenticatorService _authenticatorService;
-        private readonly IOtpAuthenticatorRepository _otpAuthenticatorRepository;
-        private readonly IUserService _userService;
-
-        public VerifyOtpAuthenticatorCommandHandler(
-            IOtpAuthenticatorRepository otpAuthenticatorRepository,
-            AuthBusinessRules authBusinessRules,
-            IUserService userService,
-            IAuthenticatorService authenticatorService
-        )
-        {
-            _otpAuthenticatorRepository = otpAuthenticatorRepository;
-            _authBusinessRules = authBusinessRules;
-            _userService = userService;
-            _authenticatorService = authenticatorService;
-        }
-
         public async Task Handle(VerifyOtpAuthenticatorCommand request, CancellationToken cancellationToken)
         {
-            OtpAuthenticator? otpAuthenticator = await _otpAuthenticatorRepository.GetAsync(
+            OtpAuthenticator? otpAuthenticator = await otpAuthenticatorRepository.GetAsync(
                 predicate: e => e.UserId == request.UserId,
                 cancellationToken: cancellationToken
             );
-            await _authBusinessRules.OtpAuthenticatorShouldBeExists(otpAuthenticator);
+            await authBusinessRules.OtpAuthenticatorShouldBeExists(otpAuthenticator);
 
-            User? user = await _userService.GetAsync(
+            User? user = await userService.GetAsync(
                 predicate: u => u.Id == request.UserId,
                 cancellationToken: cancellationToken
             );
-            await _authBusinessRules.UserShouldBeExistsWhenSelected(user);
+            await authBusinessRules.UserShouldBeExistsWhenSelected(user);
 
             otpAuthenticator!.IsVerified = true;
             user!.AuthenticatorType = AuthenticatorType.Otp;
 
-            await _authenticatorService.VerifyAuthenticatorCode(user, request.ActivationCode);
+            await authenticatorService.VerifyAuthenticatorCode(user, request.ActivationCode);
 
-            await _otpAuthenticatorRepository.UpdateAsync(otpAuthenticator);
-            await _userService.UpdateAsync(user);
+            await otpAuthenticatorRepository.UpdateAsync(otpAuthenticator);
+            await userService.UpdateAsync(user);
         }
     }
 }

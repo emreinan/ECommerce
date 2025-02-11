@@ -19,32 +19,23 @@ public class VerifyEmailAuthenticatorCommand : IRequest
         ActivationKey = activationKey;
     }
 
-    public class VerifyEmailAuthenticatorCommandHandler : IRequestHandler<VerifyEmailAuthenticatorCommand>
+    public class VerifyEmailAuthenticatorCommandHandler(
+        IEmailAuthenticatorRepository emailAuthenticatorRepository,
+        AuthBusinessRules authBusinessRules
+        ) : IRequestHandler<VerifyEmailAuthenticatorCommand>
     {
-        private readonly AuthBusinessRules _authBusinessRules;
-        private readonly IEmailAuthenticatorRepository _emailAuthenticatorRepository;
-
-        public VerifyEmailAuthenticatorCommandHandler(
-            IEmailAuthenticatorRepository emailAuthenticatorRepository,
-            AuthBusinessRules authBusinessRules
-        )
-        {
-            _emailAuthenticatorRepository = emailAuthenticatorRepository;
-            _authBusinessRules = authBusinessRules;
-        }
-
         public async Task Handle(VerifyEmailAuthenticatorCommand request, CancellationToken cancellationToken)
         {
-            EmailAuthenticator? emailAuthenticator = await _emailAuthenticatorRepository.GetAsync(
+            EmailAuthenticator? emailAuthenticator = await emailAuthenticatorRepository.GetAsync(
                 predicate: e => e.ActivationKey == request.ActivationKey,
                 cancellationToken: cancellationToken
             );
-            await _authBusinessRules.EmailAuthenticatorShouldBeExists(emailAuthenticator);
-            await _authBusinessRules.EmailAuthenticatorActivationKeyShouldBeExists(emailAuthenticator!);
+            await authBusinessRules.EmailAuthenticatorShouldBeExists(emailAuthenticator);
+            await authBusinessRules.EmailAuthenticatorActivationKeyShouldBeExists(emailAuthenticator!);
 
             emailAuthenticator!.ActivationKey = null;
             emailAuthenticator.IsVerified = true;
-            await _emailAuthenticatorRepository.UpdateAsync(emailAuthenticator);
+            await emailAuthenticatorRepository.UpdateAsync(emailAuthenticator);
         }
     }
 }

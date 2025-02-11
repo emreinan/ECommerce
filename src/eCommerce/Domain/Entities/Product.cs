@@ -15,7 +15,7 @@ public class Product : Entity<Guid>
     public virtual User User { get; set; } = default!;
     public virtual Category Category { get; set; } = default!;
     public virtual ICollection<ProductImage> ProductImages { get; set; } = default!;
-    //public virtual ICollection<ProductComment> ProductComments { get; set; } = default!;
-    public virtual ICollection<BasketItem> BasketItems { get; set; }
+    public virtual ICollection<ProductComment> ProductComments { get; set; } = default!;
+    public virtual ICollection<BasketItem> BasketItems { get; set; } = default!;
     public virtual ICollection<OrderItem> OrderItems { get; set; } = default!;
 }

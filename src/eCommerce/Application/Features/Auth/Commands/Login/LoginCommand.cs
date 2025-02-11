@@ -27,34 +27,21 @@ public class LoginCommand : IRequest<LoggedResponse>
         IpAddress = ipAddress;
     }
 
-    public class LoginCommandHandler : IRequestHandler<LoginCommand, LoggedResponse>
+    public class LoginCommandHandler(
+        IUserService userService,
+        IAuthService authService,
+        AuthBusinessRules authBusinessRules,
+        IAuthenticatorService authenticatorService
+        ) : IRequestHandler<LoginCommand, LoggedResponse>
     {
-        private readonly AuthBusinessRules _authBusinessRules;
-        private readonly IAuthenticatorService _authenticatorService;
-        private readonly IAuthService _authService;
-        private readonly IUserService _userService;
-
-        public LoginCommandHandler(
-            IUserService userService,
-            IAuthService authService,
-            AuthBusinessRules authBusinessRules,
-            IAuthenticatorService authenticatorService
-        )
-        {
-            _userService = userService;
-            _authService = authService;
-            _authBusinessRules = authBusinessRules;
-            _authenticatorService = authenticatorService;
-        }
-
         public async Task<LoggedResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            User? user = await _userService.GetAsync(
+            User? user = await userService.GetAsync(
                 predicate: u => u.Email == request.UserForLoginDto.Email,
                 cancellationToken: cancellationToken
             );
-            await _authBusinessRules.UserShouldBeExistsWhenSelected(user);
-            await _authBusinessRules.UserPasswordShouldBeMatch(user!, request.UserForLoginDto.Password);
+            await authBusinessRules.UserShouldBeExistsWhenSelected(user);
+            await authBusinessRules.UserPasswordShouldBeMatch(user!, request.UserForLoginDto.Password);
 
             LoggedResponse loggedResponse = new();
 
@@ -62,19 +49,19 @@ public class LoginCommand : IRequest<LoggedResponse>
             {
                 if (request.UserForLoginDto.AuthenticatorCode is null)
                 {
-                    await _authenticatorService.SendAuthenticatorCode(user);
+                    await authenticatorService.SendAuthenticatorCode(user);
                     loggedResponse.RequiredAuthenticatorType = user.AuthenticatorType;
                     return loggedResponse;
                 }
 
-                await _authenticatorService.VerifyAuthenticatorCode(user, request.UserForLoginDto.AuthenticatorCode);
+                await authenticatorService.VerifyAuthenticatorCode(user, request.UserForLoginDto.AuthenticatorCode);
             }
 
-            AccessToken createdAccessToken = await _authService.CreateAccessToken(user);
+            AccessToken createdAccessToken = await authService.CreateAccessToken(user);
 
-            Domain.Entities.RefreshToken createdRefreshToken = await _authService.CreateRefreshToken(user, request.IpAddress);
-            Domain.Entities.RefreshToken addedRefreshToken = await _authService.AddRefreshToken(createdRefreshToken);
-            await _authService.DeleteOldRefreshTokens(user.Id);
+            Domain.Entities.RefreshToken createdRefreshToken = await authService.CreateRefreshToken(user, request.IpAddress);
+            Domain.Entities.RefreshToken addedRefreshToken = await authService.AddRefreshToken(createdRefreshToken);
+            await authService.DeleteOldRefreshTokens(user.Id);
 
             loggedResponse.AccessToken = createdAccessToken;
             loggedResponse.RefreshToken = addedRefreshToken;

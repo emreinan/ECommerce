@@ -26,26 +26,15 @@ public class RegisterCommand : IRequest<RegisteredResponse>
         IpAddress = ipAddress;
     }
 
-    public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisteredResponse>
+    public class RegisterCommandHandler(
+        IUserRepository userRepository,
+        IAuthService authService,
+        AuthBusinessRules authBusinessRules
+        ) : IRequestHandler<RegisterCommand, RegisteredResponse>
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IAuthService _authService;
-        private readonly AuthBusinessRules _authBusinessRules;
-
-        public RegisterCommandHandler(
-            IUserRepository userRepository,
-            IAuthService authService,
-            AuthBusinessRules authBusinessRules
-        )
-        {
-            _userRepository = userRepository;
-            _authService = authService;
-            _authBusinessRules = authBusinessRules;
-        }
-
         public async Task<RegisteredResponse> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
-            await _authBusinessRules.UserEmailShouldBeNotExists(request.UserForRegisterDto.Email);
+            await authBusinessRules.UserEmailShouldBeNotExists(request.UserForRegisterDto.Email);
 
             HashingHelper.CreatePasswordHash(
                 request.UserForRegisterDto.Password,
@@ -59,15 +48,15 @@ public class RegisterCommand : IRequest<RegisteredResponse>
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
                 };
-            User createdUser = await _userRepository.AddAsync(newUser);
+            User createdUser = await userRepository.AddAsync(newUser);
 
-            AccessToken createdAccessToken = await _authService.CreateAccessToken(createdUser);
+            AccessToken createdAccessToken = await authService.CreateAccessToken(createdUser);
 
-            Domain.Entities.RefreshToken createdRefreshToken = await _authService.CreateRefreshToken(
+            Domain.Entities.RefreshToken createdRefreshToken = await authService.CreateRefreshToken(
                 createdUser,
                 request.IpAddress
             );
-            Domain.Entities.RefreshToken addedRefreshToken = await _authService.AddRefreshToken(createdRefreshToken);
+            Domain.Entities.RefreshToken addedRefreshToken = await authService.AddRefreshToken(createdRefreshToken);
 
             RegisteredResponse registeredResponse = new() { AccessToken = createdAccessToken, RefreshToken = addedRefreshToken };
             return registeredResponse;

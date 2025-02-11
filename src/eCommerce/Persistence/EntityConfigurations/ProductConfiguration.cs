@@ -10,17 +10,44 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
     {
         builder.ToTable("Products").HasKey(p => p.Id);
 
-        builder.Property(p => p.Id).HasColumnName("Id").IsRequired();
         builder.Property(p => p.SellerId).HasColumnName("SellerId").IsRequired();
         builder.Property(p => p.CategoryId).HasColumnName("CategoryId").IsRequired();
-        builder.Property(p => p.Name).HasColumnName("Name").IsRequired();
-        builder.Property(p => p.Price).HasColumnName("Price").IsRequired();
-        builder.Property(p => p.Details).HasColumnName("Details");
+        builder.Property(p => p.Name).HasColumnName("Name").IsRequired().HasMaxLength(200);
+        builder.Property(p => p.Price).HasColumnName("Price").IsRequired().HasPrecision(18, 2);
+        builder.Property(p => p.Details).HasColumnName("Details").HasMaxLength(500);
         builder.Property(p => p.StockAmount).HasColumnName("StockAmount").IsRequired();
+
+        builder.ToTable(tb => tb.HasCheckConstraint("CHK_Product_StockAmount", "[StockAmount] >= 0"));
+
         builder.Property(p => p.Enabled).HasColumnName("Enabled").IsRequired();
+
         builder.Property(p => p.CreatedDate).HasColumnName("CreatedDate").IsRequired();
         builder.Property(p => p.UpdatedDate).HasColumnName("UpdatedDate");
         builder.Property(p => p.DeletedDate).HasColumnName("DeletedDate");
+
+        builder.HasOne(p => p.Category)
+           .WithMany(c => c.Products)
+           .HasForeignKey(p => p.CategoryId);
+
+        builder.HasMany(p => p.ProductImages)
+            .WithOne(pi => pi.Product)
+            .HasForeignKey(pi => pi.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(p => p.ProductComments)
+            .WithOne(pc => pc.Product)
+            .HasForeignKey(pc => pc.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(p => p.BasketItems)
+            .WithOne(bi => bi.Product)
+            .HasForeignKey(bi => bi.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(p => p.OrderItems)
+                    .WithOne(oi => oi.Product)
+                    .HasForeignKey(oi => oi.ProductId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasQueryFilter(p => !p.DeletedDate.HasValue);
     }

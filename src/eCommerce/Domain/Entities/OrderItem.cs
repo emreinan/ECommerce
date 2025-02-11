@@ -14,4 +14,5 @@ public class OrderItem : Entity<Guid>
     public decimal TotalPrice => ProductPriceAtOrderTime * Quantity;
 
     public virtual Order Order { get; set; } = default!;
+    public virtual Product Product { get; set; } = default!;
 }
