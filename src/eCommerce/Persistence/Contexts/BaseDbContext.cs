@@ -24,6 +24,7 @@ public class BaseDbContext(DbContextOptions dbContextOptions, IConfiguration con
     public DbSet<Discount> Discounts { get; set; }
     public DbSet<ProductImage> ProductImages { get; set; }
     public DbSet<ProductComment> ProductComments { get; set; }
+    public DbSet<OrderHistory> OrderHistories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

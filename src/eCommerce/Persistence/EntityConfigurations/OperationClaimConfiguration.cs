@@ -16,6 +16,7 @@ using Application.Features.Addresses.Constants;
 using Application.Features.Discounts.Constants;
 using Application.Features.ProductImages.Constants;
 using Application.Features.ProductComments.Constants;
+using Application.Features.OrderHistories.Constants;
 
 namespace Persistence.EntityConfigurations;
 
@@ -243,6 +244,20 @@ public class OperationClaimConfiguration : IEntityTypeConfiguration<OperationCla
                 new() { Id = ++lastId, Name = ProductCommentsOperationClaims.Create },
                 new() { Id = ++lastId, Name = ProductCommentsOperationClaims.Update },
                 new() { Id = ++lastId, Name = ProductCommentsOperationClaims.Delete },
+            ]
+        );
+        #endregion
+        
+        
+        #region OrderHistories CRUD
+        featureOperationClaims.AddRange(
+            [
+                new() { Id = ++lastId, Name = OrderHistoriesOperationClaims.Admin },
+                new() { Id = ++lastId, Name = OrderHistoriesOperationClaims.Read },
+                new() { Id = ++lastId, Name = OrderHistoriesOperationClaims.Write },
+                new() { Id = ++lastId, Name = OrderHistoriesOperationClaims.Create },
+                new() { Id = ++lastId, Name = OrderHistoriesOperationClaims.Update },
+                new() { Id = ++lastId, Name = OrderHistoriesOperationClaims.Delete },
             ]
         );
         #endregion

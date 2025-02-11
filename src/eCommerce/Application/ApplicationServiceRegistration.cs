@@ -30,6 +30,7 @@ using Application.Services.Addresses;
 using Application.Services.Discounts;
 using Application.Services.ProductImages;
 using Application.Services.ProductComments;
+using Application.Services.OrderHistories;
 
 namespace Application;
 
@@ -81,6 +82,7 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IDiscountService, DiscountManager>();
         services.AddScoped<IProductImageService, ProductImageManager>();
         services.AddScoped<IProductCommentService, ProductCommentManager>();
+        services.AddScoped<IOrderHistoryService, OrderHistoryManager>();
         return services;
     }
 
