@@ -5,9 +5,6 @@ using Persistence.Contexts;
 
 namespace Persistence.Repositories;
 
-public class OrderHistoryRepository : EfRepositoryBase<OrderHistory, Guid, BaseDbContext>, IOrderHistoryRepository
+public class OrderHistoryRepository(BaseDbContext context) : EfRepositoryBase<OrderHistory, Guid, BaseDbContext>(context), IOrderHistoryRepository
 {
-    public OrderHistoryRepository(BaseDbContext context) : base(context)
-    {
-    }
 }

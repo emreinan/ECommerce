@@ -31,40 +31,27 @@ public class UpdateUserFromAuthCommand : IRequest<UpdatedUserFromAuthResponse>
         Password = password;
     }
 
-    public class UpdateUserFromAuthCommandHandler : IRequestHandler<UpdateUserFromAuthCommand, UpdatedUserFromAuthResponse>
+    public class UpdateUserFromAuthCommandHandler(
+        IUserRepository userRepository,
+        IMapper mapper,
+        UserBusinessRules userBusinessRules,
+        IAuthService authService
+        ) : IRequestHandler<UpdateUserFromAuthCommand, UpdatedUserFromAuthResponse>
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
-        private readonly UserBusinessRules _userBusinessRules;
-        private readonly IAuthService _authService;
-
-        public UpdateUserFromAuthCommandHandler(
-            IUserRepository userRepository,
-            IMapper mapper,
-            UserBusinessRules userBusinessRules,
-            IAuthService authService
-        )
-        {
-            _userRepository = userRepository;
-            _mapper = mapper;
-            _userBusinessRules = userBusinessRules;
-            _authService = authService;
-        }
-
         public async Task<UpdatedUserFromAuthResponse> Handle(
             UpdateUserFromAuthCommand request,
             CancellationToken cancellationToken
         )
         {
-            User? user = await _userRepository.GetAsync(
+            User? user = await userRepository.GetAsync(
                 predicate: u => u.Id.Equals(request.Id),
                 cancellationToken: cancellationToken
             );
-            await _userBusinessRules.UserShouldBeExistsWhenSelected(user);
-            await _userBusinessRules.UserPasswordShouldBeMatched(user: user!, request.Password);
-            await _userBusinessRules.UserEmailShouldNotExistsWhenUpdate(user!.Id, user.Email);
+            await userBusinessRules.UserShouldBeExistsWhenSelected(user);
+            await userBusinessRules.UserPasswordShouldBeMatched(user: user!, request.Password);
+            await userBusinessRules.UserEmailShouldNotExistsWhenUpdate(user!.Id, user.Email);
 
-            user = _mapper.Map(request, user);
+            user = mapper.Map(request, user);
             if (request.NewPassword != null && !string.IsNullOrWhiteSpace(request.NewPassword))
             {
                 HashingHelper.CreatePasswordHash(
@@ -76,10 +63,10 @@ public class UpdateUserFromAuthCommand : IRequest<UpdatedUserFromAuthResponse>
                 user!.PasswordSalt = passwordSalt;
             }
 
-            User updatedUser = await _userRepository.UpdateAsync(user!);
+            User updatedUser = await userRepository.UpdateAsync(user!);
 
-            UpdatedUserFromAuthResponse response = _mapper.Map<UpdatedUserFromAuthResponse>(updatedUser);
-            response.AccessToken = await _authService.CreateAccessToken(user!);
+            UpdatedUserFromAuthResponse response = mapper.Map<UpdatedUserFromAuthResponse>(updatedUser);
+            response.AccessToken = await authService.CreateAccessToken(user!);
             return response;
         }
     }

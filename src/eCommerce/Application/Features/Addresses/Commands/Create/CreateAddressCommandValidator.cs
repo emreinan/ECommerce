@@ -7,13 +7,13 @@ public class CreateAddressCommandValidator : AbstractValidator<CreateAddressComm
     public CreateAddressCommandValidator()
     {
         RuleFor(c => c.UserId).NotEmpty();
-        RuleFor(c => c.AddressTitle).NotEmpty();
-        RuleFor(c => c.FullName).NotEmpty();
-        RuleFor(c => c.Street).NotEmpty();
-        RuleFor(c => c.City).NotEmpty();
-        RuleFor(c => c.State).NotEmpty();
-        RuleFor(c => c.ZipCode).NotEmpty();
-        RuleFor(c => c.Country).NotEmpty();
-        RuleFor(c => c.PhoneNumber).NotEmpty();
+        RuleFor(c => c.AddressTitle).NotEmpty().MaximumLength(50);
+        RuleFor(c => c.FullName).NotEmpty().MaximumLength(50);
+        RuleFor(c => c.Street).NotEmpty().MaximumLength(200);
+        RuleFor(c => c.City).NotEmpty().MaximumLength(100);
+        RuleFor(c => c.State).NotEmpty().MaximumLength(100);
+        RuleFor(c => c.ZipCode).NotEmpty().MaximumLength(20);
+        RuleFor(c => c.Country).NotEmpty().MaximumLength(100);
+        RuleFor(c => c.PhoneNumber).NotEmpty().MaximumLength(20);
     }
 }

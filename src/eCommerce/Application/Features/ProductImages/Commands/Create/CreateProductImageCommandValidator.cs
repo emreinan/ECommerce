@@ -7,6 +7,6 @@ public class CreateProductImageCommandValidator : AbstractValidator<CreateProduc
     public CreateProductImageCommandValidator()
     {
         RuleFor(c => c.ProductId).NotEmpty();
-        RuleFor(c => c.ImageUrl).NotEmpty();
+        RuleFor(c => c.ImageUrl).NotEmpty().MaximumLength(500);
     }
 }

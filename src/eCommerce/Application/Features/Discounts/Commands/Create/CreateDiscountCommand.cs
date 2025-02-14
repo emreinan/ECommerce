@@ -18,6 +18,7 @@ public class CreateDiscountCommand : IRequest<CreatedDiscountResponse>, ISecured
     public required decimal Amount { get; set; }
     public decimal? Percentage { get; set; }
     public decimal? MinOrderAmount { get; set; }
+    public int UsageLimit { get; set; }
     public required DateTime StartDate { get; set; }
     public required DateTime EndDate { get; set; }
     public required bool IsActive { get; set; }

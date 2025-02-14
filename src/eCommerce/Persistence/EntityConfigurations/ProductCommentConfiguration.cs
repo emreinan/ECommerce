@@ -9,6 +9,7 @@ public class ProductCommentConfiguration : IEntityTypeConfiguration<ProductComme
     public void Configure(EntityTypeBuilder<ProductComment> builder)
     {
         builder.ToTable("ProductComments").HasKey(pc => pc.Id);
+        builder.ToTable(tb => tb.HasCheckConstraint("CHK_ProductComment_StarCount", "[StarCount] BETWEEN 1 AND 5"));
 
         builder.Property(pc => pc.ProductId).HasColumnName("ProductId").IsRequired();
         builder.Property(pc => pc.UserId).HasColumnName("UserId").IsRequired();

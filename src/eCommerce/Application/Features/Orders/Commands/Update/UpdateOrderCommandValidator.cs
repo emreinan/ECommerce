@@ -6,9 +6,11 @@ public class UpdateOrderCommandValidator : AbstractValidator<UpdateOrderCommand>
 {
     public UpdateOrderCommandValidator()
     {
-        RuleFor(c => c.Id).NotEmpty();
         RuleFor(c => c.UserId).NotEmpty();
-        RuleFor(c => c.OrderCode).NotEmpty();
-        RuleFor(c => c.Address).NotEmpty();
+        RuleFor(x => x.UserId).NotEmpty();
+        RuleFor(x => x.ShippingAddressId).NotEmpty();
+        RuleFor(x => x.PaymentMethod).NotEmpty();
+        RuleFor(x => x.Status).NotEmpty();
+        RuleFor(x => x.IsPaid).NotEmpty();
     }
 }

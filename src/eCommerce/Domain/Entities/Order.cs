@@ -15,8 +15,8 @@ public class Order : Entity<Guid>
     public decimal ShippingCost { get; set; }
     public decimal FinalAmount { get; set; }
 
-    public OrderStatus Status { get; set; } 
-    public bool IsPaid { get; set; } 
+    public OrderStatus Status { get; set; }
+    public bool IsPaid { get; set; } = false;
     public PaymentMethod PaymentMethod { get; set; }
 
     public virtual Discount? Discount { get; set; }

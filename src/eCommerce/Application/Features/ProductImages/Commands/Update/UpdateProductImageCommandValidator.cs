@@ -8,6 +8,6 @@ public class UpdateProductImageCommandValidator : AbstractValidator<UpdateProduc
     {
         RuleFor(c => c.Id).NotEmpty();
         RuleFor(c => c.ProductId).NotEmpty();
-        RuleFor(c => c.ImageUrl).NotEmpty();
+        RuleFor(c => c.ImageUrl).NotEmpty().MaximumLength(500);
     }
 }

@@ -1,5 +1,4 @@
 using Application.Features.ProductComments.Constants;
-using Application.Features.ProductComments.Constants;
 using Application.Features.ProductComments.Rules;
 using Application.Services.Repositories;
 using AutoMapper;

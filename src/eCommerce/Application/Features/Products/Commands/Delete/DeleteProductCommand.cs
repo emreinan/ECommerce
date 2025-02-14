@@ -1,5 +1,4 @@
 using Application.Features.Products.Constants;
-using Application.Features.Products.Constants;
 using Application.Features.Products.Rules;
 using Application.Services.Repositories;
 using AutoMapper;
