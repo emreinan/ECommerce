@@ -4,29 +4,23 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Persistence.EntityConfigurations;
 
-public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
+public class RefreshTokenConfiguration : BaseEntityConfiguration<RefreshToken, Guid>
 {
-    public void Configure(EntityTypeBuilder<RefreshToken> builder)
+    public override void Configure(EntityTypeBuilder<RefreshToken> builder)
     {
-        builder.ToTable("RefreshTokens").HasKey(rt => rt.Id);
+        base.Configure(builder);
+        builder.Property(rt => rt.UserId).IsRequired();
+        builder.Property(rt => rt.Token).IsRequired();
+        builder.Property(rt => rt.ExpirationDate).IsRequired().HasMaxLength(512);
+        builder.Property(rt => rt.CreatedByIp).IsRequired().HasMaxLength(45);
+        builder.Property(rt => rt.RevokedDate);
+        builder.Property(rt => rt.RevokedByIp).HasMaxLength(45);
+        builder.Property(rt => rt.ReplacedByToken).HasMaxLength(512);
+        builder.Property(rt => rt.ReasonRevoked).HasMaxLength(250);
 
-        builder.Property(rt => rt.Id).HasColumnName("Id").IsRequired();
-        builder.Property(rt => rt.UserId).HasColumnName("UserId").IsRequired();
-        builder.Property(rt => rt.Token).HasColumnName("Token").IsRequired();
-        builder.Property(rt => rt.ExpirationDate).HasColumnName("ExpiresDate").IsRequired();
-        builder.Property(rt => rt.CreatedByIp).HasColumnName("CreatedByIp").IsRequired();
-        builder.Property(rt => rt.RevokedDate).HasColumnName("RevokedDate");
-        builder.Property(rt => rt.RevokedByIp).HasColumnName("RevokedByIp");
-        builder.Property(rt => rt.ReplacedByToken).HasColumnName("ReplacedByToken");
-        builder.Property(rt => rt.ReasonRevoked).HasColumnName("ReasonRevoked");
-        builder.Property(rt => rt.CreatedDate).HasColumnName("CreatedDate").IsRequired();
-        builder.Property(rt => rt.UpdatedDate).HasColumnName("UpdatedDate");
-        builder.Property(rt => rt.DeletedDate).HasColumnName("DeletedDate");
-
-        builder.HasQueryFilter(rt => !rt.DeletedDate.HasValue);
-
-        builder.HasOne(rt => rt.User);
-
-        builder.HasBaseType((string)null!);
+        builder.HasOne(rt => rt.User)
+               .WithMany() 
+               .HasForeignKey(rt => rt.UserId)
+               .OnDelete(DeleteBehavior.Cascade);
     }
 }

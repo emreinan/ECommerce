@@ -4,17 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Persistence.EntityConfigurations;
 
-public class BasketConfiguration : IEntityTypeConfiguration<Basket>
+public class BasketConfiguration : BaseEntityConfiguration<Basket, Guid>
 {
-    public void Configure(EntityTypeBuilder<Basket> builder)
+    public override void Configure(EntityTypeBuilder<Basket> builder)
     {
-        builder.ToTable("Baskets").HasKey(b => b.Id);
-
-        builder.Property(b => b.UserId).HasColumnName("UserId").IsRequired();
-
-        builder.Property(b => b.CreatedDate).HasColumnName("CreatedDate").IsRequired();
-        builder.Property(b => b.UpdatedDate).HasColumnName("UpdatedDate");
-        builder.Property(b => b.DeletedDate).HasColumnName("DeletedDate");
+        base.Configure(builder);
+        builder.Property(b => b.UserId).IsRequired();
 
         builder.HasOne(b => b.User)
             .WithMany()
@@ -25,7 +20,5 @@ public class BasketConfiguration : IEntityTypeConfiguration<Basket>
             .WithOne(bi => bi.Basket)
             .HasForeignKey(bi => bi.BasketId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasQueryFilter(b => !b.DeletedDate.HasValue);
     }
 }

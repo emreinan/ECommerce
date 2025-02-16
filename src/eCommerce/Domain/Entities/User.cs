@@ -1,6 +1,9 @@
-﻿namespace Domain.Entities;
+﻿using NArchitecture.Core.Security.Entities;
 
-public class User : NArchitecture.Core.Security.Entities.User<Guid>
+
+namespace Domain.Entities;
+
+public class User : User<Guid>
 {
     public string FirstName { get; set; } = default!;
     public string LastName { get; set; } = default!;

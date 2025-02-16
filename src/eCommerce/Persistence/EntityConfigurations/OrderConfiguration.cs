@@ -4,28 +4,24 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Persistence.EntityConfigurations;
 
-public class OrderConfiguration : IEntityTypeConfiguration<Order>
+public class OrderConfiguration : BaseEntityConfiguration<Order, Guid>
 {
-    public void Configure(EntityTypeBuilder<Order> builder)
+    public override void Configure(EntityTypeBuilder<Order> builder)
     {
-        builder.ToTable("Orders").HasKey(o => o.Id);
+        base.Configure(builder);
         builder.HasIndex(o => o.OrderCode).IsUnique();
 
-        builder.Property(o => o.UserId).HasColumnName("UserId").IsRequired();
-        builder.Property(o => o.ShippingAddressId).HasColumnName("ShippingAddressId").IsRequired();
-        builder.Property(o => o.DiscountId).HasColumnName("DiscountId").IsRequired(false);
-        builder.Property(o => o.OrderCode).HasColumnName("OrderCode").IsRequired().HasMaxLength(50);
-        builder.Property(o => o.OrderDate).HasColumnName("OrderDate").IsRequired();
-        builder.Property(o => o.TaxAmount).HasColumnName("TaxAmount").IsRequired().HasPrecision(18, 2);
-        builder.Property(o => o.ShippingCost).HasColumnName("ShippingCost").IsRequired().HasPrecision(18, 2);
+        builder.Property(o => o.UserId).IsRequired();
+        builder.Property(o => o.ShippingAddressId).IsRequired();
+        builder.Property(o => o.DiscountId).IsRequired(false);
+        builder.Property(o => o.OrderCode).IsRequired().HasMaxLength(50);
+        builder.Property(o => o.OrderDate).IsRequired();
+        builder.Property(o => o.TaxAmount).IsRequired().HasPrecision(18, 2);
+        builder.Property(o => o.ShippingCost).IsRequired().HasPrecision(18, 2);
         builder.Property(o => o.FinalAmount).IsRequired().HasPrecision(18, 2);
-        builder.Property(o => o.IsPaid).HasColumnName("IsPaid").IsRequired();
-        builder.Property(o => o.Status).HasColumnName("Status").IsRequired();
-        builder.Property(o => o.PaymentMethod).HasColumnName("PaymentMethod").IsRequired();
-
-        builder.Property(o => o.CreatedDate).HasColumnName("CreatedDate").IsRequired();
-        builder.Property(o => o.UpdatedDate).HasColumnName("UpdatedDate");
-        builder.Property(o => o.DeletedDate).HasColumnName("DeletedDate");
+        builder.Property(o => o.IsPaid).IsRequired();
+        builder.Property(o => o.Status).IsRequired();
+        builder.Property(o => o.PaymentMethod).IsRequired();
 
         builder.HasOne(o => o.User)
             .WithMany()
@@ -40,7 +36,5 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.HasMany(o => o.OrderItems)
             .WithOne(oi => oi.Order)
             .HasForeignKey(oi => oi.OrderId);
-
-        builder.HasQueryFilter(o => !o.DeletedDate.HasValue);
     }
 }

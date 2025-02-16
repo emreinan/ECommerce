@@ -4,25 +4,20 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Persistence.EntityConfigurations;
 
-public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
+public class OrderItemConfiguration : BaseEntityConfiguration<OrderItem, Guid>
 {
-    public void Configure(EntityTypeBuilder<OrderItem> builder)
+    public override void Configure(EntityTypeBuilder<OrderItem> builder)
     {
-        builder.ToTable("OrderItems").HasKey(oi => oi.Id);
-
-        builder.Property(oi => oi.OrderId).HasColumnName("OrderId").IsRequired();
-        builder.Property(oi => oi.ProductId).HasColumnName("ProductId").IsRequired();
-        builder.Property(oi => oi.ProductNameAtOrderTime).HasColumnName("ProductNameAtOrderTime").IsRequired().HasMaxLength(100);
-        builder.Property(oi => oi.ProductPriceAtOrderTime).HasColumnName("ProductPriceAtOrderTime").IsRequired().HasPrecision(18, 2);
-        builder.Property(oi => oi.Quantity).HasColumnName("Quantity").IsRequired();
+        base.Configure(builder);
+        builder.Property(oi => oi.OrderId).IsRequired();
+        builder.Property(oi => oi.ProductId).IsRequired();
+        builder.Property(oi => oi.ProductNameAtOrderTime).IsRequired().HasMaxLength(100);
+        builder.Property(oi => oi.ProductPriceAtOrderTime).IsRequired().HasPrecision(18, 2);
+        builder.Property(oi => oi.Quantity).IsRequired();
         builder.Ignore(oi => oi.TotalPrice); // Derived Property, veritabanýnda tutulmuyor.
 
        // builder.Property(oi => oi.TotalPrice)
        //.HasComputedColumnSql("[ProductPriceAtOrderTime] * [Quantity]");
-
-        builder.Property(oi => oi.CreatedDate).HasColumnName("CreatedDate").IsRequired();
-        builder.Property(oi => oi.UpdatedDate).HasColumnName("UpdatedDate");
-        builder.Property(oi => oi.DeletedDate).HasColumnName("DeletedDate");
 
         builder.HasOne(oi => oi.Order)
             .WithMany(o => o.OrderItems)
@@ -33,7 +28,5 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
             .WithMany()
             .HasForeignKey(oi => oi.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasQueryFilter(oi => !oi.DeletedDate.HasValue);
     }
 }

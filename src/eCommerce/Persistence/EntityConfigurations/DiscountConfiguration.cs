@@ -4,25 +4,18 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Persistence.EntityConfigurations;
 
-public class DiscountConfiguration : IEntityTypeConfiguration<Discount>
+public class DiscountConfiguration : BaseEntityConfiguration<Discount, Guid>
 {
-    public void Configure(EntityTypeBuilder<Discount> builder)
+    public override void Configure(EntityTypeBuilder<Discount> builder)
     {
-        builder.ToTable("Discounts").HasKey(d => d.Id);
-
-        builder.Property(d => d.Code).HasColumnName("Code").IsRequired().HasMaxLength(20);
-        builder.Property(d => d.Amount).HasColumnName("Amount").IsRequired().HasPrecision(18, 2);
-        builder.Property(d => d.Percentage).HasColumnName("Percentage").HasPrecision(6, 3);
-        builder.Property(d => d.MinOrderAmount).HasColumnName("MinOrderAmount").HasPrecision(18, 2);
-        builder.Property(d => d.StartDate).HasColumnName("StartDate").IsRequired();
-        builder.Property(d => d.EndDate).HasColumnName("EndDate").IsRequired();
-        builder.Property(d => d.UsageLimit).HasColumnName("UsageLimit").IsRequired();
-        builder.Property(d => d.IsActive).HasColumnName("IsActive").IsRequired().HasDefaultValue(true);
-
-        builder.Property(d => d.CreatedDate).HasColumnName("CreatedDate").IsRequired().ValueGeneratedOnAdd();
-        builder.Property(d => d.UpdatedDate).HasColumnName("UpdatedDate");
-        builder.Property(d => d.DeletedDate).HasColumnName("DeletedDate");
-
-        builder.HasQueryFilter(d => !d.DeletedDate.HasValue);
+        base.Configure(builder);
+        builder.Property(d => d.Code).IsRequired().HasMaxLength(20);
+        builder.Property(d => d.Amount).IsRequired().HasPrecision(18, 2);
+        builder.Property(d => d.Percentage).HasPrecision(6, 3);
+        builder.Property(d => d.MinOrderAmount).HasPrecision(18, 2);
+        builder.Property(d => d.StartDate).IsRequired();
+        builder.Property(d => d.EndDate).IsRequired();
+        builder.Property(d => d.UsageLimit).IsRequired();
+        builder.Property(d => d.IsActive).IsRequired().HasDefaultValue(true);
     }
 }

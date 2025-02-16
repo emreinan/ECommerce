@@ -4,22 +4,18 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Persistence.EntityConfigurations;
 
-public class ProductCommentConfiguration : IEntityTypeConfiguration<ProductComment>
+public class ProductCommentConfiguration : BaseEntityConfiguration<ProductComment, Guid>
 {
-    public void Configure(EntityTypeBuilder<ProductComment> builder)
+    public override void Configure(EntityTypeBuilder<ProductComment> builder)
     {
-        builder.ToTable("ProductComments").HasKey(pc => pc.Id);
+        base.Configure(builder);
         builder.ToTable(tb => tb.HasCheckConstraint("CHK_ProductComment_StarCount", "[StarCount] BETWEEN 1 AND 5"));
 
-        builder.Property(pc => pc.ProductId).HasColumnName("ProductId").IsRequired();
-        builder.Property(pc => pc.UserId).HasColumnName("UserId").IsRequired();
-        builder.Property(pc => pc.Text).HasColumnName("Text").IsRequired().HasMaxLength(500);
-        builder.Property(pc => pc.StarCount).HasColumnName("StarCount").IsRequired();
-        builder.Property(pc => pc.IsConfirmed).HasColumnName("IsConfirmed").IsRequired().HasDefaultValue(false);
-
-        builder.Property(pc => pc.CreatedDate).HasColumnName("CreatedDate").IsRequired();
-        builder.Property(pc => pc.UpdatedDate).HasColumnName("UpdatedDate");
-        builder.Property(pc => pc.DeletedDate).HasColumnName("DeletedDate");
+        builder.Property(pc => pc.ProductId).IsRequired();
+        builder.Property(pc => pc.UserId).IsRequired();
+        builder.Property(pc => pc.Text).IsRequired().HasMaxLength(500);
+        builder.Property(pc => pc.StarCount).IsRequired();
+        builder.Property(pc => pc.IsConfirmed).IsRequired().HasDefaultValue(false);
 
         builder.HasOne(pc => pc.Product)
             .WithMany(p => p.ProductComments)
@@ -30,7 +26,5 @@ public class ProductCommentConfiguration : IEntityTypeConfiguration<ProductComme
             .WithMany()
             .HasForeignKey(pc => pc.UserId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        builder.HasQueryFilter(pc => !pc.DeletedDate.HasValue);
     }
 }

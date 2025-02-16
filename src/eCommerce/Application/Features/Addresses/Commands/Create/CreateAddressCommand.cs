@@ -30,27 +30,16 @@ public class CreateAddressCommand : IRequest<CreatedAddressResponse>, ISecuredRe
     public string? CacheKey { get; }
     public string[]? CacheGroupKey => ["GetAddresses"];
 
-    public class CreateAddressCommandHandler : IRequestHandler<CreateAddressCommand, CreatedAddressResponse>
+    public class CreateAddressCommandHandler(IMapper mapper, IAddressRepository addressRepository,
+                                     AddressBusinessRules addressBusinessRules) : IRequestHandler<CreateAddressCommand, CreatedAddressResponse>
     {
-        private readonly IMapper _mapper;
-        private readonly IAddressRepository _addressRepository;
-        private readonly AddressBusinessRules _addressBusinessRules;
-
-        public CreateAddressCommandHandler(IMapper mapper, IAddressRepository addressRepository,
-                                         AddressBusinessRules addressBusinessRules)
-        {
-            _mapper = mapper;
-            _addressRepository = addressRepository;
-            _addressBusinessRules = addressBusinessRules;
-        }
-
         public async Task<CreatedAddressResponse> Handle(CreateAddressCommand request, CancellationToken cancellationToken)
         {
-            Address address = _mapper.Map<Address>(request);
+            Address address = mapper.Map<Address>(request);
 
-            await _addressRepository.AddAsync(address);
+            await addressRepository.AddAsync(address);
 
-            CreatedAddressResponse response = _mapper.Map<CreatedAddressResponse>(address);
+            CreatedAddressResponse response = mapper.Map<CreatedAddressResponse>(address);
             return response;
         }
     }

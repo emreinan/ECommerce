@@ -1,56 +1,64 @@
 ﻿using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using NArchitecture.Core.Security.Entities;
+using NArchitecture.Core.Security.Enums;
 using NArchitecture.Core.Security.Hashing;
 
 namespace Persistence.EntityConfigurations;
 
-public class UserConfiguration : IEntityTypeConfiguration<User>
+public class UserConfiguration : BaseEntityConfiguration<User, Guid>
 {
-    public void Configure(EntityTypeBuilder<User> builder)
+    public override void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable("Users").HasKey(u => u.Id);
+        base.Configure(builder);
 
-        builder.Property(u => u.Id).HasColumnName("Id").IsRequired();
-        builder.Property(u => u.Email).HasColumnName("Email").IsRequired();
-        builder.Property(u => u.PasswordSalt).HasColumnName("PasswordSalt").IsRequired();
-        builder.Property(u => u.PasswordHash).HasColumnName("PasswordHash").IsRequired();
-        builder.Property(u => u.AuthenticatorType).HasColumnName("AuthenticatorType").IsRequired();
-        builder.Property(u => u.CreatedDate).HasColumnName("CreatedDate").IsRequired();
-        builder.Property(u => u.UpdatedDate).HasColumnName("UpdatedDate");
-        builder.Property(u => u.DeletedDate).HasColumnName("DeletedDate");
+        builder.Property(u => u.Email).IsRequired().HasMaxLength(100);
+        builder.Property(u => u.PasswordSalt).IsRequired().HasMaxLength(256);
+        builder.Property(u => u.PasswordHash).IsRequired().HasMaxLength(256);
+        builder.Property(u => u.AuthenticatorType).IsRequired();
 
-        builder.HasQueryFilter(u => !u.DeletedDate.HasValue);
+        builder.HasMany(u => u.UserOperationClaims)
+               .WithOne(uoc => uoc.User)
+               .HasForeignKey(uoc => uoc.UserId)
+               .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(u => u.UserOperationClaims);
-        builder.HasMany(u => u.RefreshTokens);
-        builder.HasMany(u => u.EmailAuthenticators);
-        builder.HasMany(u => u.OtpAuthenticators);
+        builder.HasMany(u => u.RefreshTokens)
+               .WithOne(rt => rt.User)
+               .HasForeignKey(rt => rt.UserId)
+               .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasData(_seeds);
+        builder.HasMany(u => u.EmailAuthenticators)
+               .WithOne(ea => ea.User)
+               .HasForeignKey(ea => ea.UserId);
 
-        builder.HasBaseType((string)null!);
+        builder.HasMany(u => u.OtpAuthenticators)
+               .WithOne(oa => oa.User)
+               .HasForeignKey(oa => oa.UserId);
+
+        builder.HasData(GetUsers());
     }
 
     public static Guid AdminId { get; } = Guid.NewGuid();
-    private IEnumerable<User> _seeds
+
+    private static List<User> GetUsers()
     {
-        get
-        {
-            HashingHelper.CreatePasswordHash(
-                password: "Passw0rd!",
-                passwordHash: out byte[] passwordHash,
-                passwordSalt: out byte[] passwordSalt
-            );
-            User adminUser =
-                new()
-                {
-                    Id = AdminId,
-                    Email = "narch@kodlama.io",
-                    PasswordHash = passwordHash,
-                    PasswordSalt = passwordSalt
-                };
-            yield return adminUser;
-        }
+        HashingHelper.CreatePasswordHash("1234", out byte[] PasswordHash, out byte[] PasswordSalt);
+
+        return
+        [
+            new User
+            {
+                Id = AdminId,
+                FirstName = "Admin",
+                LastName = "admin",
+                PhoneNumber = "1234567890",
+                DateOfBirth = DateTime.UtcNow,
+                Email = "admin@mail.com",
+                PasswordHash = PasswordHash,
+                PasswordSalt = PasswordSalt,
+            }
+        ];
     }
+
 }
